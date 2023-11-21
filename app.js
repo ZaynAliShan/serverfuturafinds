@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: ['https://futurafinds.com', 'https://www.futurafinds.com', 'http://localhost:3000', 'https://zainim.netlify.app'],
+  origin: "https://zainim.netlify.app",
   credentials: true,
   optionsSuccessStatus: 200
 }));
