@@ -6,20 +6,28 @@ const connectDB = require("./db/connection");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
-const REMOTE_CLIENT = process.env.REMOTE_CLIENT
+
 // https://api.futurafinds.com (backend)
 // https://futurafinds.com (frontend)
 
 // Rest of the packages
 app.use(express.json());
 app.use(cookieParser());
-app.use(
-  cors({
-    origin: `${REMOTE_CLIENT}`,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    credentials: true,
-  })
-);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = ['https://futurafinds.com', 'https://www.futurafinds.com', 'http://localhost:3000', 'https://ineventorym.netlify.app/'];
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+app.use(cors(corsOptions));
 
 // Importing Middlewares
 const notFound = require("./middlewares/notFound");

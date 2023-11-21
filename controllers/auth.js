@@ -13,24 +13,33 @@ const register = async (req, res) => {
     throw new BadRequestError("Please provide name, email and password");
   }
 
-  //   Validation for email that already exists
+  // Validation for email that already exists
   const isEmailExists = await User.findOne({ email });
   if (isEmailExists) {
     throw new BadRequestError("User with this email already exists");
   }
 
-  //   Creating User
+  // Creating User
   const user = await User.create({ name, email, password, role: "user" });
 
-  //   Creating Token & sending cookie
+  // Creating Token & sending cookie
   const userToken = {
     userID: user._id,
     userName: user.name,
     userRole: user.role,
   };
   const token = user.createToken(userToken);
-  user.sendCookies(res, token);
-  res.status(StatusCodes.OK).json({ user });
+
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: false, // should be true in production if using HTTPS
+    domain: '.futurafinds.com', // allows cookie to be shared across subdomains
+    sameSite: 'None', // required if secure is true and your site is accessible from multiple domains
+    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // example of 3 days expiration
+  });
+  
+
+  res.status(StatusCodes.CREATED).json({ user });
 };
 
 // Login
@@ -40,16 +49,16 @@ const login = async (req, res) => {
     throw new BadRequestError("Please provide email and password");
   }
 
-  // Checking is Email valid or not
+  // Checking if Email is valid or not
   const user = await User.findOne({ email });
   if (!user) {
-    throw new UnauthenticatedError("Please provide correct email");
+    throw new UnauthenticatedError("Incorrect credentials");
   }
 
-  // Checking is password valid or not
+  // Checking if password is valid or not
   const isPasswordValid = await user.comparePassword(password);
   if (!isPasswordValid) {
-    throw new UnauthenticatedError("Please provide correct password");
+    throw new UnauthenticatedError("Incorrect credentials");
   }
 
   // Creating Token & sending cookie
@@ -59,15 +68,28 @@ const login = async (req, res) => {
     userRole: user.role,
   };
   const token = user.createToken(userToken);
-  user.sendCookies(res, token);
+
+  // Set the cookie directly using res.cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: false, // should be true in production if using HTTPS
+    domain: '.futurafinds.com', // allows cookie to be shared across subdomains
+    sameSite: 'None', // required if secure is true and your site is accessible from multiple domains
+    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // example of 3 days expiration
+  });
+
   res.status(StatusCodes.OK).json({ user });
 };
 
 // Logout
 const logout = async (req, res) => {
   res.cookie("token", "logout", {
-    expires: new Date(Date.now()),
+    httpOnly: true,
+    secure: false, // Set to true in production
+    sameSite: 'Lax', // Can be 'Strict' or 'None' (if secure is true)
+    expires: new Date(Date.now()) // Expire immediately
   });
+
   res.status(StatusCodes.OK).json({ msg: "User logged out" });
 };
 
