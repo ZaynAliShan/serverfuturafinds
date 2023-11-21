@@ -69,14 +69,14 @@ const login = async (req, res) => {
   };
   const token = user.createToken(userToken);
 
-  // Set the cookie directly using res.cookie
   res.cookie('token', token, {
-    httpOnly: true,
-    secure: false, // should be true in production if using HTTPS
-    domain: '.futurafinds.com', // allows cookie to be shared across subdomains
-    sameSite: 'None', // required if secure is true and your site is accessible from multiple domains
-    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // example of 3 days expiration
+    httpOnly: true, // The cookie cannot be accessed by client-side APIs, such as JavaScript.
+    secure: true, // The cookie will only be sent over HTTPS.
+    sameSite: 'None', // The cookie is sent to the server even in cross-site requests.
+    expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) // The cookie expires in 3 days.
   });
+  
+  
 
   res.status(StatusCodes.OK).json({ user });
 };
@@ -85,10 +85,10 @@ const login = async (req, res) => {
 const logout = async (req, res) => {
   res.cookie("token", "logout", {
     httpOnly: true,
-    secure: false, // Set to true in production
-    sameSite: 'Lax', // Can be 'Strict' or 'None' (if secure is true)
+    secure: true,
+    sameSite: 'None',
     expires: new Date(Date.now()) // Expire immediately
-  });
+  });  
 
   res.status(StatusCodes.OK).json({ msg: "User logged out" });
 };
