@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 const corsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigins = ['https://futurafinds.com', 'https://www.futurafinds.com', 'http://localhost:3000', 'https://ineventorym.netlify.app/'];
+    const allowedOrigins = ['https://futurafinds.com', 'https://www.futurafinds.com', 'http://localhost:3000', 'https://zainim.netlify.app'];
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
