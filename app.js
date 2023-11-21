@@ -39,6 +39,11 @@ app.use("/api/v1/products", productsRouter);
 app.use(notFound);
 app.use(errorHandler);
 
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ message: 'Internal Server Error', error: err.message });
+});
+
 // Starting Server
 const start = async () => {
   try {
