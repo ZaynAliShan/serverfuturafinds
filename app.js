@@ -14,20 +14,12 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cookieParser());
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    const allowedOrigins = ['https://futurafinds.com', 'https://www.futurafinds.com', 'http://localhost:3000', 'https://zainim.netlify.app'];
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+app.use(cors({
+  origin: ['https://futurafinds.com', 'https://www.futurafinds.com', 'http://localhost:3000', 'https://zainim.netlify.app'],
   credentials: true,
   optionsSuccessStatus: 200
-};
+}));
 
-app.use(cors(corsOptions));
 
 // Importing Middlewares
 const notFound = require("./middlewares/notFound");
