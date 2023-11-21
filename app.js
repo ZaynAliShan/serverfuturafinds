@@ -6,6 +6,7 @@ const connectDB = require("./db/connection");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
+const REMOTE_CLIENT = process.env.REMOTE_CLIENT
 
 // https://api.futurafinds.com (backend)
 // https://futurafinds.com (frontend)
@@ -15,7 +16,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: "https://zainim.netlify.app",
+  origin: `${REMOTE_CLIENT}`,
   credentials: true,
   optionsSuccessStatus: 200
 }));
